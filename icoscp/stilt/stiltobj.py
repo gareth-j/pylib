@@ -22,6 +22,8 @@ import pandas as pd
 import requests
 import json
 import xarray as xr
+import netCDF4
+
 import icoscp.const as CPC
 from icoscp.stilt import timefuncs as tf
 ##############################################################################
@@ -286,12 +288,15 @@ class StiltStation():
                                       str(dd.year)+'x'+str(dd.month).zfill(2)+'x'+
                                       str(dd.day).zfill(2)+'x'+str(dd.hour).zfill(2)+'/foot')]
 
+        dataset = netCDF4.MFDataset(fp_files)
+        fp = xr.open_dataarray(dataset)
         #Concatenate xarrays on time axis:
         # add decode cf = False... see performance issue..https://github.com/pydata/xarray/issues/1385
+        """
         fp = xr.open_mfdataset(fp_files, concat_dim="time",
                                data_vars='minimal', coords='minimal',
                                compat='override', parallel=True, decode_cf=False)
-
+        """
         #Format time attributes:
         fp.time.attrs["standard_name"] = "time"
         fp.time.attrs["axis"] = "T"
